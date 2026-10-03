@@ -7,5 +7,6 @@ void gerar_aleatorios(RegistroImagem *dados, int n);
 void escrever_arquivo(const char *caminho, RegistroImagem *dados, int n);
 int  contar_linhas(const char *caminho);
 void ler_arquivo(const char *caminho, RegistroImagem *dados, int n);
+void embaralhar_parcial(RegistroImagem **ponteiros, int inicio, int fim, float proporcao_embaralhada);
 
 #endif

@@ -13,8 +13,8 @@ static float aleatorio_float(float min, float max) {
 static void gerar_timestamp(char *destino, int indice) {
     struct tm base = {0};
     base.tm_year = 126;  // 2026 (anos desde 1900)
-    base.tm_mon  = 8;    // setembro (0 = janeiro)
-    base.tm_mday = 7;
+    base.tm_mon  = 0;    //(0 = janeiro)
+    base.tm_mday = 1;
     base.tm_hour = 0;
     base.tm_min  = 0;
     base.tm_sec  = 0;
@@ -97,4 +97,34 @@ void ler_arquivo(const char *caminho, RegistroImagem *dados, int n) {
     }
 
     fclose(f);
+}
+
+void embaralhar_parcial(RegistroImagem **ponteiros, int inicio, int fim, float proporcao_embaralhada) {
+    int n = fim - inicio + 1;
+    int qtd_embaralhar = (int)(n * proporcao_embaralhada);
+
+    if (qtd_embaralhar < 2) {
+        return;
+    }
+
+    int *indices = malloc(n * sizeof(int));
+    for (int i = 0; i < n; i++) {
+        indices[i] = inicio + i;
+    }
+
+    for (int i = n - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        int temp = indices[i];
+        indices[i] = indices[j];
+        indices[j] = temp;
+    }
+
+    for (int i = qtd_embaralhar - 1; i > 0; i--) {
+        int j = rand() % (i + 1);
+        RegistroImagem *temp = ponteiros[indices[i]];
+        ponteiros[indices[i]] = ponteiros[indices[j]];
+        ponteiros[indices[j]] = temp;
+    }
+
+    free(indices);
 }
