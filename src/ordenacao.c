@@ -1,10 +1,23 @@
 #include <stdlib.h>
 #include "ordenacao.h"
 
+CriterioOrdenacao criterio_atual = CRITERIO_DESMATAMENTO;
+
+static float valor_criterio(RegistroImagem *r) {
+    switch (criterio_atual) {
+        case CRITERIO_LATITUDE:
+            return r->latitude;
+        case CRITERIO_LONGITUDE:
+            return r->longitude;
+        default:
+            return r->nivel_desmatamento;
+    }
+}
+
 void bubble_sort(RegistroImagem **ponteiros, int inicio, int fim) {
     for (int i = inicio; i < fim; i++) {
         for (int j = inicio; j < fim - (i - inicio); j++) {
-            if (ponteiros[j]->nivel_desmatamento > ponteiros[j + 1]->nivel_desmatamento) {
+            if (valor_criterio(ponteiros[j]) > valor_criterio(ponteiros[j + 1])) {
                 RegistroImagem *temp = ponteiros[j];
                 ponteiros[j] = ponteiros[j + 1];
                 ponteiros[j + 1] = temp;
@@ -18,7 +31,7 @@ void insertion_sort(RegistroImagem **ponteiros, int inicio, int fim) {
         RegistroImagem *atual = ponteiros[i];
         int j = i - 1;
 
-        while (j >= inicio && ponteiros[j]->nivel_desmatamento > atual->nivel_desmatamento) {
+        while (j >= inicio && valor_criterio(ponteiros[j]) > valor_criterio(atual)) {
             ponteiros[j + 1] = ponteiros[j];
             j--;
         }
@@ -32,7 +45,7 @@ void selection_sort(RegistroImagem **ponteiros, int inicio, int fim) {
         int indice_menor = i;
 
         for (int j = i + 1; j <= fim; j++) {
-            if (ponteiros[j]->nivel_desmatamento < ponteiros[indice_menor]->nivel_desmatamento) {
+            if (valor_criterio(ponteiros[j]) < valor_criterio(ponteiros[indice_menor])) {
                 indice_menor = j;
             }
         }
@@ -58,7 +71,7 @@ static void merge(RegistroImagem **ponteiros, int inicio, int meio, int fim) {
     int i = 0, j = 0, k = inicio;
 
     while (i < n1 && j < n2) {
-        if (esquerda[i]->nivel_desmatamento <= direita[j]->nivel_desmatamento) {
+        if (valor_criterio(esquerda[i]) <= valor_criterio(direita[j])) {
             ponteiros[k] = esquerda[i];
             i++;
         } else {
@@ -102,11 +115,11 @@ static int particionar(RegistroImagem **ponteiros, int inicio, int fim) {
     ponteiros[indice_aleatorio] = ponteiros[fim];
     ponteiros[fim] = temp_pivo;
 
-    float pivo = ponteiros[fim]->nivel_desmatamento;
+    float pivo = valor_criterio(ponteiros[fim]);
     int i = inicio - 1;
 
     for (int j = inicio; j < fim; j++) {
-        if (ponteiros[j]->nivel_desmatamento <= pivo) {
+        if (valor_criterio(ponteiros[j]) <= pivo) {
             i++;
             RegistroImagem *temp = ponteiros[i];
             ponteiros[i] = ponteiros[j];
@@ -120,6 +133,7 @@ static int particionar(RegistroImagem **ponteiros, int inicio, int fim) {
 
     return i + 1;
 }
+
 void quick_sort(RegistroImagem **ponteiros, int inicio, int fim) {
     if (inicio < fim) {
         int posicao_pivo = particionar(ponteiros, inicio, fim);
@@ -134,11 +148,11 @@ static void heapify(RegistroImagem **ponteiros, int inicio, int tamanho, int rai
     int esquerda = inicio + 2 * (raiz - inicio) + 1;
     int direita = inicio + 2 * (raiz - inicio) + 2;
 
-    if (esquerda < inicio + tamanho && ponteiros[esquerda]->nivel_desmatamento > ponteiros[maior]->nivel_desmatamento) {
+    if (esquerda < inicio + tamanho && valor_criterio(ponteiros[esquerda]) > valor_criterio(ponteiros[maior])) {
         maior = esquerda;
     }
 
-    if (direita < inicio + tamanho && ponteiros[direita]->nivel_desmatamento > ponteiros[maior]->nivel_desmatamento) {
+    if (direita < inicio + tamanho && valor_criterio(ponteiros[direita]) > valor_criterio(ponteiros[maior])) {
         maior = direita;
     }
 

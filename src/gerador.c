@@ -10,7 +10,7 @@ static float aleatorio_float(float min, float max) {
     return min + escala * (max - min);
 }
 
-static void gerar_timestamp(char *destino, int indice) {
+void gerar_timestamp(char *destino, int indice) {
     struct tm base = {0};
     base.tm_year = 126;  // 2026 (anos desde 1900)
     base.tm_mon  = 0;    //(0 = janeiro)
