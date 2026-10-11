@@ -58,7 +58,6 @@ data/resultado_interativo.csv
 data/grafico_interativo.png
 # Ambiente virtual Python
 .venv/
-data/dados.txt
 data/resultados.csv
 
 data/.benchmark_concluido

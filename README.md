@@ -159,3 +159,17 @@ APS-Ordenacao/
 O projeto tem como objetivo aplicar conceitos de algoritmos e estruturas de dados, analisar complexidades e comparar experimentalmente o desempenho de diferentes métodos de ordenação em conjuntos de dados com características distintas.
 
 Desenvolvido para fins acadêmicos.
+
+## Como executar no CLion
+
+1. Clone o repositório e abra a pasta `APS-Ordenacao` no CLion usando **File > Open**.
+2. Aguarde o CLion carregar e configurar o projeto pelo CMake.
+3. Verifique se o CLion possui uma toolchain C configurada, com compilador GCC ou Clang e CMake.
+4. Abra **Run > Edit Configurations** e selecione a configuração `APS_Ordenacao`.
+5. Defina o **Working directory** como a raiz do projeto (`$PROJECT_DIR$`).
+6. Compile usando **Build > Build Project**.
+7. Execute a configuração `APS_Ordenacao`.
+
+**Importante:** o diretório de trabalho deve ser a raiz do projeto para que os caminhos relativos de `data/` funcionem corretamente.
+
+Para gerar gráficos, instale as dependências listadas em `requirements.txt`. Os scripts `.bat` e `.sh` preparam um ambiente virtual Python e instalam essas dependências automaticamente quando executados conforme as instruções anteriores.
