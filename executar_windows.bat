@@ -1,3 +1,4 @@
+
 @echo off
 setlocal
 
@@ -9,135 +10,124 @@ echo          APS-Ordenacao
 echo ========================================
 echo.
 
-REM ========================================
-REM 1. CONFIGURACAO DO CAMINHO DO CMAKE
-REM ========================================
-
-set "CMAKE_EXE=C:\Program Files\JetBrains\CLion 2026.2.2\bin\cmake\win\x64\bin\cmake.exe"
-
-if not exist "%CMAKE_EXE%" (
-    echo Erro: CMake nao encontrado.
-    echo Verifique se o CLion esta instalado no caminho configurado.
-    pause
-    exit /b 1
-)
-
-echo Verificando CMake...
-"%CMAKE_EXE%" --version
-
+REM 1. Verifica as ferramentas necessarias.
+where cmake >nul 2>&1
 if errorlevel 1 (
-    echo Erro: nao foi possivel executar o CMake.
-    pause
-    exit /b 1
+    echo Erro: CMake nao encontrado no PATH.
+    echo Instale o CMake e habilite sua inclusao no PATH.
+    goto erro
 )
 
-REM ========================================
-REM 2. CONFIGURACAO DO COMPILADOR E NINJA
-REM ========================================
-
-set "GCC_EXE=C:\Program Files\JetBrains\CLion 2026.2.2\bin\mingw\bin\gcc.exe"
-set "NINJA_EXE=C:\Program Files\JetBrains\CLion 2026.2.2\bin\ninja\win\x64\ninja.exe"
-
-if not exist "%GCC_EXE%" (
-    echo Erro: compilador GCC nao encontrado.
-    echo Verifique a instalacao do CLion e do MinGW.
-    pause
-    exit /b 1
+where gcc >nul 2>&1
+if errorlevel 1 (
+    echo Erro: GCC nao encontrado no PATH.
+    echo Instale o GCC, por exemplo pelo MSYS2 MinGW-w64.
+    goto erro
 )
 
-if not exist "%NINJA_EXE%" (
-    echo Erro: Ninja nao encontrado.
-    echo Verifique a instalacao do CLion.
-    pause
-    exit /b 1
+where ninja >nul 2>&1
+if errorlevel 1 (
+    echo Erro: Ninja nao encontrado no PATH.
+    echo Instale o Ninja e habilite sua inclusao no PATH.
+    goto erro
 )
 
-REM ========================================
-REM 3. VERIFICACAO DO PYTHON
-REM ========================================
-
+REM 2. Verifica o Python.
 where python >nul 2>&1
-
 if errorlevel 1 (
-    echo Erro: Python nao encontrado.
+    echo Erro: Python nao encontrado no PATH.
     echo Instale o Python 3 e habilite sua inclusao no PATH.
-    pause
-    exit /b 1
+    goto erro
 )
 
-echo.
-echo Verificando Python...
+echo Verificando ferramentas...
+cmake --version
+gcc --version
+ninja --version
 python --version
 
-REM ========================================
-REM 4. VERIFICACAO DAS DEPENDENCIAS
-REM ========================================
-
+REM 3. Verifica os arquivos necessarios.
 if not exist "requirements.txt" (
     echo Erro: requirements.txt nao encontrado.
-    pause
-    exit /b 1
+    goto erro
 )
 
+if not exist "CMakeLists.txt" (
+    echo Erro: CMakeLists.txt nao encontrado.
+    goto erro
+)
+
+REM 4. Cria um ambiente virtual Python isolado.
 echo.
-echo [1/3] Instalando dependencias Python...
+echo [1/4] Preparando ambiente Python...
+
+if not exist ".venv\Scripts\python.exe" (
+    python -m venv .venv
+    if errorlevel 1 (
+        echo Erro ao criar o ambiente virtual.
+        goto erro
+    )
+)
+
+call ".venv\Scripts\activate.bat"
+if errorlevel 1 (
+    echo Erro ao ativar o ambiente virtual.
+    goto erro
+)
 
 python -m pip install -r requirements.txt
-
 if errorlevel 1 (
     echo Erro ao instalar as dependencias Python.
-    pause
-    exit /b 1
+    goto erro
 )
 
-REM ========================================
-REM 5. CONFIGURACAO DO PROJETO COM CMAKE
-REM ========================================
-
+REM 5. Configura o projeto com CMake.
 echo.
-echo [2/3] Configurando o projeto com CMake...
+echo [2/4] Configurando o projeto...
 
-"%CMAKE_EXE%" -S . -B build -G Ninja -DCMAKE_C_COMPILER="%GCC_EXE%" -DCMAKE_MAKE_PROGRAM="%NINJA_EXE%"
-
+cmake -S . -B build -G Ninja
 if errorlevel 1 (
-    echo Erro ao configurar o projeto.
-    pause
-    exit /b 1
+    echo.
+    echo Erro na configuracao do CMake.
+    echo Se houver conflito com uma compilacao anterior,
+    echo feche o programa e remova a pasta build antes de tentar novamente.
+    goto erro
 )
 
-REM ========================================
-REM 6. COMPILACAO DO PROGRAMA EM C
-REM ========================================
-
+REM 6. Compila o programa em C.
 echo.
-echo Compilando o programa...
+echo [3/4] Compilando o programa...
 
-"%CMAKE_EXE%" --build build
-
+cmake --build build
 if errorlevel 1 (
-    echo Erro ao compilar o projeto.
-    pause
-    exit /b 1
+    echo Erro durante a compilacao.
+    goto erro
 )
 
-REM ========================================
-REM 7. EXECUCAO DO PROGRAMA
-REM ========================================
-
+REM 7. Executa o programa.
 echo.
-echo [3/3] Iniciando o programa...
+echo [4/4] Iniciando o programa...
 echo.
 
-if exist "build\APS_Ordenacao.exe" (
-    "build\APS_Ordenacao.exe"
-) else (
+if not exist "build\APS_Ordenacao.exe" (
     echo Erro: executavel nao encontrado em build.
-    pause
-    exit /b 1
+    echo Verifique o CMakeLists.txt e o local de saida do executavel.
+    goto erro
 )
+
+"build\APS_Ordenacao.exe"
 
 echo.
 echo Programa encerrado.
-pause
+goto fim
 
+:erro
+echo.
+echo A execucao foi interrompida devido a um erro.
+pause
+exit /b 1
+
+:fim
+echo.
+pause
 endlocal
