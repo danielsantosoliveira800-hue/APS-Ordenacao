@@ -60,3 +60,5 @@ data/grafico_interativo.png
 .venv/
 data/dados.txt
 data/resultados.csv
+
+data/.benchmark_concluido

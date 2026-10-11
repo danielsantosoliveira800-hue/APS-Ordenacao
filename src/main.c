@@ -122,6 +122,14 @@ void executar_coleta_performance(void) {
     }
 
     fclose(csv);
+
+    FILE *sinal = fopen("data/.benchmark_concluido", "w");
+
+    if (sinal != NULL) {
+        fprintf(sinal, "Benchmark concluido\n");
+        fclose(sinal);
+    }
+
     printf("\nColeta concluida. Resultados salvos em data/resultados.csv\n");
 }
 

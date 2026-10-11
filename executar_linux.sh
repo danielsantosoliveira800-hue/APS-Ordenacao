@@ -54,5 +54,23 @@ cmake -S . -B build -DCMAKE_C_COMPILER="$COMPILADOR"
 # Compila o programa em C.
 cmake --build build
 
+# Remove um sinal antigo para detectar apenas uma nova coleta.
+rm -f "data/.benchmark_concluido"
+
 # Executa o programa compilado.
 ./build/APS_Ordenacao
+
+# Gera os gráficos somente se uma coleta de desempenho foi concluída.
+if [ -f "data/.benchmark_concluido" ]; then
+    echo
+    echo "Benchmark detectado. Gerando graficos de desempenho..."
+
+    if .venv/bin/python scripts/gerar_graficos.py; then
+        rm -f "data/.benchmark_concluido"
+        echo "Graficos de desempenho atualizados."
+    else
+        echo "Erro ao gerar os graficos." >&2
+        rm -f "data/.benchmark_concluido"
+        exit 1
+    fi
+fi

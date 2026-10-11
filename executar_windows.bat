@@ -115,8 +115,29 @@ if not exist "build\APS_Ordenacao.exe" (
     goto erro
 )
 
+del /q "data\.benchmark_concluido" 2>nul
 "build\APS_Ordenacao.exe"
 
+REM 8. Gera os graficos somente se houve um benchmark.
+if not exist "data\.benchmark_concluido" goto programa_encerrado
+
+echo.
+echo Benchmark detectado. Gerando graficos de desempenho...
+
+python scripts\gerar_graficos.py
+if errorlevel 1 (
+    echo Erro ao gerar os graficos.
+    del /q "data\.benchmark_concluido" 2>nul
+    goto erro
+)
+
+REM Remove o sinal para evitar regeneracao em execucoes futuras.
+del /q "data\.benchmark_concluido" 2>nul
+
+echo.
+echo Graficos de desempenho atualizados.
+
+:programa_encerrado
 echo.
 echo Programa encerrado.
 goto fim
