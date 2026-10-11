@@ -326,13 +326,24 @@ void executar_modo_interativo(void) {
         printf("Dados salvos em data/resultado_interativo.csv para gerar o grafico.\n");
 
         printf("\nGerar o grafico agora? (1 = sim, 2 = nao): ");
+
         if (ler_inteiro() == 1) {
-            if (system("python scripts\\grafico_interativo.py") == 0) {
+            int resultado_grafico;
+
+            // Escolhe o comando Python conforme o sistema operacional.
 #ifdef _WIN32
-                system("start data\\grafico_interativo.png");
+            resultado_grafico = system("python scripts\\grafico_interativo.py");
+#else
+            resultado_grafico = system("python3 scripts/grafico_interativo.py");
+#endif
+
+            if (resultado_grafico == 0) {
+#ifdef _WIN32
+                // Abre a imagem automaticamente no Windows.
+                system("start \"\" data\\grafico_interativo.png");
 #endif
             } else {
-                printf("Nao foi possivel gerar o grafico. Verifique se o Python esta instalado e se o programa foi iniciado na pasta raiz do projeto.\n");
+                printf("Nao foi possivel gerar o grafico. Verifique se o Python e as bibliotecas necessarias estao instalados e se o programa foi iniciado na pasta raiz do projeto.\n");
             }
         }
     }
