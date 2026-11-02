@@ -1,0 +1,57 @@
+
+# ========================================
+# Compilacao C / CMake / Ninja
+# ========================================
+*.o
+*.obj
+*.a
+*.lib
+*.dll
+*.so
+*.exe
+*.out
+*.pdb
+*.ilk
+*.map
+
+# Diretorios de compilacao
+/build/
+/build_autonomo/
+/build_testes/
+/cmake-build-*/
+/CMakeFiles/
+/CMakeCache.txt
+/compile_commands.json
+
+# ========================================
+# IDE e configuracoes locais
+# ========================================
+.idea/
+.vscode/
+
+# ========================================
+# Python
+# ========================================
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# ========================================
+# Arquivos temporarios e logs
+# ========================================
+*.tmp
+*.log
+*.bak
+.DS_Store
+Thumbs.db
+
+# ========================================
+# Resultados temporarios
+# ========================================
+data/.benchmark_concluido
+data/resultado_interativo.csv
+data/grafico_interativo.png
+executar_tudo_antigo.bat
